@@ -1,19 +1,22 @@
-import { query, mutation } from "./_generated/server";
+// @ts-ignore
+import { mutation, query } from "./_generated/server";
 
 export const getMany = query({
   args: {},
   handler: async (ctx) => {
-    const users = await ctx.db.query("users").collect();
-    return users;
+    return await ctx.db.query("users").collect();
   },
 });
 
 export const add = mutation({
   args: {},
   handler: async (ctx) => {
-    const userId = await ctx.db.insert("users", {
-      name: "Yura",
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) {
+      throw new Error("Not authenticated");
+    }
+    return await ctx.db.insert("users", {
+      name: "Yuri",
     });
-    return userId;
   },
 });
